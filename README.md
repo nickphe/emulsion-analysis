@@ -10,6 +10,7 @@ The program can be broken down into the three (or four) main tasks.
   1. Segmentation.
   2. Finding *good* initial guesses for curve-fitting.
   3. Curve-fitting.
+
 And (4) if you count the analysis of the data.
 
 ### Segmentation
@@ -22,4 +23,8 @@ Segmented droplets are then fed to *droplet_signal.py*, which collapses the drop
 
 ### Curve-fit
 Using the segmentation and initial guesses from the previous steps, the program iterates through every identified droplet, fitting a "double sphere intensity profile" to each droplet. The double sphere intensity profile is implemented in _fit.py_ and described by the functional form:
-$I = a + 2 b \sqrt()$
+$$I = a + 2 b \sqrt{R_{\mathrm{dil}}^2 - (x - x_{\mathrm{cen}})^2 - (y - y_{\mathrm{cen}})^2} + 2 c \sqrt{R_{\mathrm{den}}^2 - (x - x_{\mathrm{cen}})^2 - (y - y_{\mathrm{cen}})^2}$$
+$a$, $b$, $c$, $R_{\mathrm{dil}}$, $R_{\mathrm{den}}$, $x_{\mathrm{cen}}$, and $y_{\mathrm{cen}}$ are free parameters of the fit. 
+
+
+
