@@ -1,0 +1,23 @@
+To Do
+    implement radial averaging 
+        radially averaged curve fit
+
+        problem with the radial average curve fit -> you lose 2 dof in picking the center, which can cause probles in the fit. 
+
+        could sort radial data then find point of discontinuity in second or first derivative..?
+    
+    Need to make loop and manage saving outputs
+
+
+Best course of action seems to use signal anlysis for inner radii guess and voronoi analysis for outer radius guess.
+Also, the voronoi provided segmentation is just lovely. 
+Also, it seems that filtering the UNCERTAINTY of the DILUTE PHASE RADIUS yields accurate volume fraction measurements. 
+
+
+It looks like the "analysis log" csv file isn't being saved to the capillary folder after capillary one.
+
+Try vf with den phase radii from ilastik area, voronoi dilute phase radii
+
+perhaps need to fit just the dense phase?
+
+I think there's a memory leak somewhere causing the kernel to kill itself!?
