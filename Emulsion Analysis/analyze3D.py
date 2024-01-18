@@ -10,6 +10,8 @@ import fit
 import droplet_signal
 from remove_suffix import remove_suffix
 
+from tqdm import tqdm
+
 # object: analyzeEmulsionImage3D
 # arguments:
 #   imgPath - path to the image to be analyzed, string
@@ -27,6 +29,9 @@ emptyDict = {'xData': "",
              'popt': "",
              'pcov': "",
              'uncertainties': "",
+             'voronoi rDil': "",
+             'rDen guess': "",
+             'signal rDen': "",
              'fit xCen': "",
              'fit xCen uncertainty': "",
              'fit yCen': "",
@@ -47,7 +52,10 @@ emptyDict = {'xData': "",
              'signal den, voronoi dil vf': ""}
 
 class analyzeEmulsionImage3D:
-    def __init__(self, imgPath: str, ftPath: str, outputFolderName: str, vStep, abcGuessLi, bounds, minDilRadius):
+    def __init__(self, imgPath: str, ftPath: str, outputFolderName: str, vStep, abcGuessLi, minDilRadius, EPSILON):
+        
+        self.EPSILON = EPSILON # used to restrict bounds on dilute phase radius guess (cheese method of locking parameter)
+        
         self.log = []
         
         self.imgPath = imgPath
@@ -69,13 +77,14 @@ class analyzeEmulsionImage3D:
         self.aGuess = abcGuessLi[0]
         self.bGuess = abcGuessLi[1]
         self.cGuess = abcGuessLi[2]
-        self.bounds = bounds
         
         self.ft = pd.read_csv(ftPath)
         self.img = io.imread(imgPath)
         
         self.xPoints = self.ft["Center of the object_0"].to_numpy()
         self.yPoints = self.ft["Center of the object_1"].to_numpy()
+        
+        self.object_area = self.ft["Size in pixels"].to_numpy()
         
         print("Generating Voronoi...")
         self.circles = voronoi.circles(self.xPoints, self.yPoints)
@@ -89,21 +98,28 @@ class analyzeEmulsionImage3D:
             ax.plot(xArr, yArr)
         plt.savefig(self.outputFolder + "_voronoi_plot.png")
         plt.close()
+
+        #self.rDen_guess = self.denseRadii.rDen # guess dense radii based on signal
+        self.rDen_guess = np.sqrt(self.object_area / np.pi) # guess dense radii based on object area
+        
             
         
-        for point in self.circles.pointList:
+        for k, point in tqdm(enumerate(self.circles.pointList)):
             if point.radius >= self.minDilRadius:
                 
                 try:
                     drop = segment.dropletFromImg(self.img, point.x,point.y,point.radius)
                     sg_window = int(point.radius ** 2 * np.pi / 6)
                     self.denseRadii = droplet_signal.dropletSignal(drop.rPositions, drop.values, sg_window, self.sg_polyOrder)
-                    guessLi = [drop.x,drop.y,self.aGuess,self.bGuess,self.cGuess, self.denseRadii.rDen, drop.radius]
-                    bounds = self.bounds
-                    fitData = fit.dropletFit3D(drop.xPositions, drop.yPositions, drop.values, guessLi, bounds)
-                    print(fitData)
+                    extra_data = self.denseRadii.rDen
+                    guessLi = [drop.x,drop.y,self.aGuess,self.bGuess,self.cGuess, self.rDen_guess[k], drop.radius]
+                    bounds = ([0,0,0,0,0,0,drop.radius - self.EPSILON],[np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,drop.radius + self.EPSILON])
+                    fitData = fit.dropletFit3D(drop.xPositions, drop.yPositions, drop.values, guessLi, bounds, extra = extra_data)
+                    #print(fitData)
+                    #print(f"{round(k / len(self.circles.pointList), 3) * 100}% complete.")
                     self.log.append(fitData.fitDict)
-                    self.denseRadii.saveFig(self.signalOutputFolder, str(point))
+                    #self.denseRadii.saveFig(self.signalOutputFolder, str(point)) #save droplet signal figures
+                    plt.close()
                     
                 except RuntimeError:
                     self.log.append(emptyDict)

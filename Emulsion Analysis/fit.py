@@ -85,7 +85,7 @@ def doubleSphere3D(xy_tuple, x_cen, y_cen, a, b, c, R_den, R_dil):
     return result
 
 class dropletFit3D:
-    def __init__(self, xData, yData, values, guesses: list, bounds):
+    def __init__(self, xData, yData, values, guesses: list, bounds, extra):
         #Arguments
             # data: [x data, y data]
             # values: an array of values to fit to corresponding to the coordinates
@@ -98,6 +98,11 @@ class dropletFit3D:
         
         self.guessList = guesses
         self.boundsList = bounds
+        
+        self.extra = extra
+        
+        self.rDil_guess = self.guessList[-1]
+        self.rDen_guess = self.guessList[-2]
         
         self.popt, self.pcov, self.infodict, self.mesg, self.ier = curve_fit(doubleSphere3D, 
                                                                              [self.xData, self.yData], # input coordinates
@@ -132,6 +137,9 @@ class dropletFit3D:
              'popt': self.popt,
              'pcov': self.pcov,
              'uncertainties': self.uncertainties,
+             'voronoi rDil': self.rDil_guess,
+             'rDen guess': self.rDen_guess,
+             'signal rDen': self.extra,
              'fit xCen': self.xCen,
              'fit xCen uncertainty': self.xCenU,
              'fit yCen': self.yCen,
