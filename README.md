@@ -21,6 +21,8 @@ These "Voronoi circles" serve to segment the image into individual droplets, and
 ### Dense phase radius guess
 Segmented droplets are then fed to *droplet_signal.py*, which collapses the droplet's intensity profile into two dimensions (intensity vs. radial position). This comprises the droplet's "signal". The droplet signal is filtered using a [Savitzky-Golay filter](https://pubs.acs.org/doi/10.1021/ac60214a047), and the global maximum of the second derivative of the signal is identified. This point typically corresponds with the edge of the dense phase, and is used as the initial guess of the _dense phase radius_ for the curve-fit.
 
+Alternatively, guessing dense phase radii can be done using ilastik features. 
+
 ### Curve-fit
 Using the segmentation and initial guesses from the previous steps, the program iterates through every identified droplet, fitting a "double sphere intensity profile" to each droplet. The double sphere intensity profile is implemented in _fit.py_ and described by the functional form:
 $$I = a + 2 b \sqrt{R_{\mathrm{dil}}^2 - (x - x_{\mathrm{cen}})^2 - (y - y_{\mathrm{cen}})^2} + 2 c \sqrt{R_{\mathrm{den}}^2 - (x - x_{\mathrm{cen}})^2 - (y - y_{\mathrm{cen}})^2}$$
