@@ -61,7 +61,9 @@ This would run the analysis with (a = 500, b = 20, c = 20, epsilon = 0.5) and us
 
 You must provide the full path of the parent folder. 
 
-If there are any spaces in your parent folder path, capture it in double-quotes. 
+If there are any spaces in your parent folder path, capture it in double-quotes.
+
+^C to interrupt the shell. 
 
 
 
