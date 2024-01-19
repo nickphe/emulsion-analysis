@@ -52,7 +52,7 @@ emptyDict = {'xData': "",
              'signal den, voronoi dil vf': ""}
 
 class analyzeEmulsionImage3D:
-    def __init__(self, imgPath: str, ftPath: str, outputFolderName: str, vStep, abcGuessLi, minDilRadius, EPSILON):
+    def __init__(self, imgPath: str, ftPath: str, outputFolderName: str, vStep, abcGuessLi, minDilRadius, EPSILON, guess_type):
         
         self.EPSILON = EPSILON # used to restrict bounds on dilute phase radius guess (cheese method of locking parameter)
         
@@ -98,9 +98,14 @@ class analyzeEmulsionImage3D:
             ax.plot(xArr, yArr)
         plt.savefig(self.outputFolder + "_voronoi_plot.png")
         plt.close()
-
-        #self.rDen_guess = self.denseRadii.rDen # guess dense radii based on signal
-        self.rDen_guess = np.sqrt(self.object_area / np.pi) # guess dense radii based on object area
+        
+        if guess_type == "signal":
+            #self.rDen_guess = self.denseRadii.rDen # guess dense radii based on signal
+            signal_flag = True
+            #print("Guessing off signals!")
+        else:
+            signal_flag = False
+            self.rDen_guess = np.sqrt(self.object_area / np.pi) # guess dense radii based on object area
         
             
         
@@ -112,7 +117,10 @@ class analyzeEmulsionImage3D:
                     sg_window = int(point.radius ** 2 * np.pi / 6)
                     self.denseRadii = droplet_signal.dropletSignal(drop.rPositions, drop.values, sg_window, self.sg_polyOrder)
                     extra_data = self.denseRadii.rDen
-                    guessLi = [drop.x,drop.y,self.aGuess,self.bGuess,self.cGuess, self.rDen_guess[k], drop.radius]
+                    if signal_flag:
+                        guessLi = [drop.x,drop.y,self.aGuess,self.bGuess,self.cGuess, self.denseRadii.rDen, drop.radius]
+                    else:
+                        guessLi = [drop.x,drop.y,self.aGuess,self.bGuess,self.cGuess, self.rDen_guess[k], drop.radius]
                     bounds = ([0,0,0,0,0,0,drop.radius - self.EPSILON],[np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,drop.radius + self.EPSILON])
                     fitData = fit.dropletFit3D(drop.xPositions, drop.yPositions, drop.values, guessLi, bounds, extra = extra_data)
                     #print(fitData)
