@@ -26,7 +26,7 @@ The ilastik folder should already be created if the [ilastik protocol](ilastik_p
 
 ## Command Line Interface
 
-To run the code, we will use the command line interface, [cli.py](cli.py). First, change directories to the "emulsion analysis" folder:
+To run the code, we will use the command line interface, [cli.py](cli.py). First, change directories to the "emulsion analysis" folder (or wherever you've stored this repository):
 
 >cd /path/to/"Emulsion Analysis"
 
