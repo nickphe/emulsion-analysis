@@ -3,6 +3,8 @@ from pathlib import Path
 
 from all_images import all_images
 
+import time
+
 parser = argparse.ArgumentParser()
 parser.add_argument("path")
 parser.add_argument("a")
@@ -22,14 +24,11 @@ abc_list = [a, b, c]
 epsilon = float(args.epsilon)
 guess_type = args.guess_type
 
+
 if not parent_folder.exists():
     print("The target directory doesn't exist")
     raise SystemExit(1)
 
-for entry in parent_folder.iterdir():
-    print(entry.name)
-
-#Error handling
 if not isinstance(a, (int, float)):
     print("Please enter a valid number for 'a'")
     raise SystemExit(1)
@@ -50,7 +49,24 @@ if not isinstance(guess_type, str):
     print("'area' -> will provide fit guesses based on ilastik object area")
     raise SystemExit(1)
 
+if guess_type != "signal" and guess_type != "area":
+    print("Guess type not given by 'signal' or 'area'.")
+    print("Defaulting to using area-based guesses.")
+    guess_type = "area"
+
+print(f"Analyzing folder: {parent_folder}")
+print(f"with")
+print(f"labeling intensity parameters: a = {a}, b = {b}, c = {c}")
+print(f"R_dil bounds parameters: epsilon = {epsilon}")
+print(f"R_den guesses provided by: {guess_type}")
+print("\n")
+print("...")
+print("\n")
+
+start = time.time()
 all_images(parent_folder, abc_list, epsilon, guess_type)
-    
+end = time.time()
+
+print(f"Analysis completed in: {round(end-start, 3) / 60} minutes")
     
     
