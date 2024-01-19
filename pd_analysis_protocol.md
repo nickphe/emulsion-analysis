@@ -65,6 +65,9 @@ If there are any spaces in your parent folder path, capture it in double-quotes.
 
 ^C to interrupt the shell. 
 
+I typically like to guess a = 500, b = 20, c = 20, epsilon = 0.5, guess_type = 'area'
+
+
 
 
 
