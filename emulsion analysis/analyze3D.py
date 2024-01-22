@@ -87,17 +87,17 @@ class analyzeEmulsionImage3D:
         self.object_area = self.ft["Size in pixels"].to_numpy()
         
         # Generate voronoi
-        print("\t --> Generating Voronoi...")
+        print("\t --> Guessing R_dil / Segmenting...")
         self.circles = voronoi.circles(self.xPoints, self.yPoints)
         self.circles.generateVoronoi(self.stepSize)
-        print("\t --> Voronoi Complete.")
+        print("\t --> R_dil guesses and segmentation complete.")
         
         fig, ax = plt.subplots(dpi = 200)
         ax.imshow(self.img)
         for point in self.circles.pointList:
             xArr, yArr = point.getCircle(360)
             ax.plot(xArr, yArr)
-        plt.savefig(self.outputFolder + "_voronoi_plot.png")
+        plt.savefig(self.outputFolder + "_segmentation_plot.png")
         plt.close()
         
         if guess_type == "signal":

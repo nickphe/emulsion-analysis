@@ -43,6 +43,15 @@ def all_images(parent_folder, abc_guess, epsilon, guess_type):
                 imgFitData = analyzeEmulsionImage3D(img_path, ft_path, img_name, vStep = 0.001, abcGuessLi = abc_guess, minDilRadius = 6, EPSILON = epsilon, guess_type = guess_type)
                 imgFitData.write_csv(log_path, img_name)
             # Error "handling"    - might want to remove this, it might not be a great idea...
-            except(RuntimeError):
+            
+            except(FileNotFoundError) as fnfe:
                 print(f"Critical error fitting {img_name}!")
+                print(f"TEMPERATURE FOLDER: {cur_folder} SKIPPED!!! \n")
+                print(f"TEMPERATURE FOLDER: {cur_folder} SKIPPED!!! \n")
+                print(f"Train ilastik on {cur_folder}!") 
+                print(fnfe)
+            
+            except(RuntimeError) as re:
+                print(f"Critical error fitting {img_name}!")
+                print(re)
                 
