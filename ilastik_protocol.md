@@ -62,6 +62,8 @@ In the above image, you can see my labels drawn on to the image. But how does il
 
 ![training_2](https://github.com/nickphe/emulsion-analysis/blob/108018d42647a979587795220d5e1a7e18c173cf/ilastik%20protocol%20images/training_2.png)
 
+Note: click on the "current view" dropdown to change which training image you are looking at. 
+
 Some general wisdom when training ilastik:
 **Keep annotations minimal and focus on correcting mistakes.**
 
