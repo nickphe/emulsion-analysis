@@ -1,5 +1,11 @@
 import numpy as np
 
+import time
+
+from rich.console import Console
+
+console = Console()
+
 class point:
 # point class contains individual information about the points associated with the center of circles and the circles themselves
         def __init__(self, x, y):
@@ -47,7 +53,10 @@ class circles:
     # can think of growing bubbles out of each point, if a bubble ever touches another bubble, we stop those bubbles
     def generateVoronoi(self, stepSize):
     # usually want to pass a relatively small stepSize so that there are numerical errors in this very much discretized procedure
-        # update all circles by minimum distance to save a little time. 
+        # update all circles by minimum distance to save a little time.
+        
+        start = time.time()
+         
         distanceList = []
         for point1 in self.pointList:
                 for point2 in self.pointList:
@@ -59,27 +68,30 @@ class circles:
         minDistance = np.min(distanceArray)
         point2.updateRadius(minDistance)
         point1.updateRadius(minDistance)
+        
+        with console.status("\t [bold green]Segmenting image...") as status:
+            while totalCompleteCircles <= self.numPoints - 1:
 
-        while totalCompleteCircles <= self.numPoints - 1:
+                for point1 in self.pointList:
+                    for point2 in self.pointList:
 
-            for point1 in self.pointList:
-                for point2 in self.pointList:
+                        if point1 is not point2:       
+                                
+                            distance = self.dist(point1.loc, point2.loc)
 
-                    if point1 is not point2:       
+                            if point1.radius + point2.radius <= distance:
+                                point2.updateRadius(stepSize)
+                                point1.updateRadius(stepSize)
                             
-                        distance = self.dist(point1.loc, point2.loc)
+                            if point1.radius + point2.radius >= distance:
+                                point1.completeCircle()
+                                point2.completeCircle()
+                            
+                            if point1.radius > distance:
+                                point1.completeCircle()
 
-                        if point1.radius + point2.radius <= distance:
-                            point2.updateRadius(stepSize)
-                            point1.updateRadius(stepSize)
-                        
-                        if point1.radius + point2.radius >= distance:
-                            point1.completeCircle()
-                            point2.completeCircle()
-                        
-                        if point1.radius > distance:
-                            point1.completeCircle()
-
-                        if point2.radius > distance:
-                            point2.completeCircle()
-    
+                            if point2.radius > distance:
+                                point2.completeCircle()
+        
+            end = time.time()
+            print(f"\t --> Capillary image segmented in {round(end - start, 2)} seconds.")
