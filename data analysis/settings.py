@@ -3,10 +3,10 @@ import os
 def init():
 
     global parent_folder
-    parent_folder = "/Users/nanostars/Desktop/a3a4/Levers"
+    parent_folder = "/Users/nanostars/Desktop/2024 01 24 a3_a4 1 to 1/Levers"
 
     global output_path
-    output_path = "/Users/nanostars/Desktop/a3a4/analysis output"
+    output_path = "/Users/nanostars/Desktop/2024 01 24 a3_a4 1 to 1/analysis output"
     
     global ft_file_pattern
     ft_file_pattern = "_table"
@@ -16,6 +16,9 @@ def init():
     
     global method_vf
     method_vf = "mode"
+    
+    global considered_capillaries
+    considered_capillaries = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     
     global conc_dict
               #cap : #concentration

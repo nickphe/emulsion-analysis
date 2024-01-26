@@ -13,6 +13,7 @@ from output import create_directory
 from capillary import Capillary
 from scipy.optimize import curve_fit
 from chi_squared import reduced_chi_squared
+from get_cap_number import get_cap_number
 
 from rich.console import Console
 console = Console()
@@ -31,10 +32,14 @@ class Temperature:
     # initiate directory that will hold temperature data
         self.folder_path = os.path.join(settings.output_path, self.name)
         create_directory(self.folder_path)
-        
+    
+    # create list of capillaries associated with temperature, excluding capillaries we would like to exclude from the experiment
         for cap_name in self.capillary_names:
-            cap = Capillary(cap_name, self.name)
-            self.capillaries.append(cap)
+            if get_cap_number(cap_name) in settings.considered_capillaries:
+                cap = Capillary(cap_name, self.name)
+                self.capillaries.append(cap)
+            else:
+                console.print(f"[yellow] Skipped[/yellow]: [cyan]{cap_name}[/cyan]")
     # create lever rules
         try:
         # create lever rule dataset  
@@ -50,25 +55,32 @@ class Temperature:
         
             method_vf = settings.method_vf
             
-            for capillary in self.capillaries:
+            for i, capillary in enumerate(self.capillaries):
                 vf = capillary.stats[f"{method_vf} fit vf"]
                 vf_list.append(vf)
                 vf_std = np.std(capillary.fit_vf)
                 vf_std_list.append(vf_std)
-                vf_u = vf_std
+                vf_u = vf_std #/ np.sqrt(len(capillary.fit_vf)) # should we include / sqrt(N)??
                 vf_u_list.append(vf_u)
                 conc = capillary.concentration
                 conc_list.append(conc)
                 f.write(f"capillary name: {capillary.name}, capillary concentration: {conc}; vf = {vf}, std = {vf_std}.\n")
         
-        # fit line
-            popt, pcov = curve_fit(lin_model, conc_list, vf_list)
+        # fit line                 function,      x,        y
+            popt, pcov = curve_fit(lin_model, conc_list, vf_list, 
+                                   sigma = vf_u_list, absolute_sigma = True) # weights fits based on uncertainty
             m = popt[0]
             b = popt[1]
+            sigma_m = np.sqrt(np.diag(pcov)[0])
+            sigma_b = np.sqrt(np.diag(pcov)[1])
             ns_den = (1-b)/m
             ns_dil = (-b)/m
+            ns_den_uncertainty = np.sqrt( np.square(sigma_b/m) + (np.square(1-b)*np.square(sigma_m)) / (m ** 4) )
+            ns_dil_uncertainty = np.sqrt( np.square(sigma_b/m) + (np.square(b) * np.square(sigma_m)) / (m ** 4) )
             self.ns_den = ns_den
             self.ns_dil = ns_dil
+            self.ns_den_uncertainty = ns_den_uncertainty
+            self.ns_dil_uncertainty = ns_dil_uncertainty
             rchi_2 = reduced_chi_squared(observed = np.array(vf_list), 
                                          expected = lin_model(np.array(conc_list),m,b), 
                                          sigma = np.array(vf_u_list), 

@@ -45,6 +45,7 @@ with console.status("[bold green]Analyzing data...") as status:
         
         console.log(f"[bold red] Completed[/bold red]: [cyan]{name}[/cyan]")
 
+
 with console.status("[bold green]Generating phase diagram...") as status:      
     save_phase_diagram(temp_obj_list, settings.melting_points.values(), settings.conc_dict.values())
 
