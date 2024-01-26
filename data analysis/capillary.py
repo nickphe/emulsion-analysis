@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from skimage.io import imread
 import os
+import matplotlib.pyplot as plt
 
 import settings
 settings.init()
@@ -18,6 +19,8 @@ from parse_parent import extract_numeric_part
 from filter_data import filter_data
 from output import create_directory
 
+from math import floor
+
 class Capillary:
     def __init__(self, capillary_name, temperature_name: str):
      
@@ -27,15 +30,15 @@ class Capillary:
         self.temp_value = extract_numeric_part(temperature_name)
         self.cap_number = get_cap_number(capillary_name)
         self.concentration = settings.conc_dict[self.cap_number]
-        console.log(f"{self.name}", self.cap_number, self.concentration, sep = "\t")
+        #console.log(f"{self.name}", self.cap_number, self.concentration, sep = "\t")
         
     # initiate directory that will hold this capillaries data
         self.folder_path = os.path.join(f"{settings.output_path}/{self.temp_name}", self.name)
         create_directory(self.folder_path)
         
     # import ilastik feature table and object identites
-        self.feature_table_path = f"{settings.parent_folder}/{self.temp_name}/ilastik/{self.name}_table.csv"
-        self.object_identities_path = f"{settings.parent_folder}/{self.temp_name}/ilastik/{self.name}_Object Identities.tif"
+        self.feature_table_path = f"{settings.parent_folder}/{self.temp_name}/ilastik/{self.name}{settings.ft_file_pattern}.csv"
+        self.object_identities_path = f"{settings.parent_folder}/{self.temp_name}/ilastik/{self.name}{settings.oi_file_pattern}.tif"
         self.feature_table = pd.read_csv(self.feature_table_path)
         self.object_identities = imread(self.object_identities_path)
    
@@ -54,6 +57,11 @@ class Capillary:
         f.close()
         rd.to_csv(f"{self.folder_path}/raw_fit_data.csv") 
         fd.to_csv(f"{self.folder_path}/filtered_fit_data.csv")
+        
+        f = open(f"{self.folder_path}/information.txt", "w")
+        f.write(f"Name: {self.name}\n Concentration: {self.concentration} uM \n Temperature: {self.temp_value} C")
+        f.close()
+    
     
     # arrays from filtered data table
         self.fit_vf = fd["fit params vf"].to_numpy()
@@ -67,6 +75,15 @@ class Capillary:
         self.fit_c = fd["fit c"].to_numpy()
         self.fit_xcen = fd["fit xCen"].to_numpy()
         self.fit_ycen = fd["fit yCen"].to_numpy()
+        
+    # droplet identities corresponding to fits
+        # # self.drop_identities = {}
+        # # for i, y in enumerate(self.fit_ycen):
+        # #     for x in self.fit_xcen:
+        # #         self.drop_identities[f"{i}"] = self.object_identities[floor(y),floor(x)]
+                
+        # obj_id_df = pd.DataFrame(self.drop_identities)
+        # obj_id_df.to_csv(f"{self.folder_path}/filtered_identity_index.csv")
         
         self.voronoi_rdil = fd["voronoi rDil"].to_numpy()
         self.signal_rden = fd["signal rDen"].to_numpy()
@@ -88,6 +105,27 @@ class Capillary:
         values = [list(self.stats.values())]
         stats_table = pd.DataFrame(values, columns=columns)
         stats_table.to_csv(f"{self.folder_path}/capillary_stats.csv")
+        
+        # Generate capillary histograms - rd: raw data, fd: filtered data
+        NBINS = 200
+      
+        rd_vf = rd[np.isfinite(rd["fit params vf"])]["fit params vf"].to_numpy()
+        fd_vf = fd[np.isfinite(fd["fit params vf"])]["fit params vf"].to_numpy()
+        bins_vf = np.histogram(np.hstack((rd_vf,fd_vf)), bins = NBINS)[1] #get the bin edges
+      
+        with plt.style.context(["science","nature"]):
+            fig, ax = plt.subplots(dpi = 500)
+            ax.hist(rd_vf, bins_vf, fill = False, histtype = "step", label = "Raw Data", color = "coral", alpha = 0.7)
+            ax.hist(fd_vf, bins_vf, fill = False, histtype = "step", label = "Filtered Data", color = "lightseagreen", alpha = 0.7)
+            ax.vlines(self.stats["mode fit vf"], 0, 20, label = "Mode", color = "firebrick", linestyle = "-")
+            ax.vlines(self.stats["mean fit vf"], 0, 20,label = "Mean", color = "darkslategray", linestyle = "--")
+            ax.vlines(self.stats["median fit vf"], 0, 20,  label = "Median", color = "navy", linestyle = "-.")
+            ax.legend()
+            ax.set_xlabel("$\\phi$")
+            ax.set_ylabel("Droplets")
+            ax.set_xlim([0,1])
+            plt.savefig(f"{self.folder_path}/vf_histogram.png")
+            plt.close()
         
         
         

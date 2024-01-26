@@ -5,7 +5,7 @@ import os
 # are defined within the functions to be called 
 
 def extract_numeric_part(folder_name):
-    pattern = r'(\d+(\.\d+)?)C'
+    pattern = r'(\d+(\.\d+)?)C?'
     match = re.match(pattern, folder_name)
     if match:
         return float(match.group(1))

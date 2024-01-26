@@ -9,5 +9,3 @@ def mode(arr, bin_count: int):
     b = bins[tallest_bin_index + 1]
     m = (a + b) / 2.0
     return m
-
-print(mode(np.random.normal(loc = 0, size = 5000), 100))
