@@ -16,7 +16,7 @@ def cartesianToPolar(x, y):
     theta = np.arctan(y/x)
     return r, theta
 
-class dropletFromImg:
+class droplet_from_img:
 # droplet object contains the data that pertains to a specific droplet. 
     def __init__(self, img, x, y, radius):
     # Arguments
@@ -32,8 +32,8 @@ class dropletFromImg:
         self.parentImg = img
         
         self.positions = np.where(maskCircle(self.img, self.x, self.y, self.radius) == 1)
-        self.xPositions = self.positions[1]
-        self.yPositions = self.positions[0]
-        self.rPositions, self.thetaPositions = cartesianToPolar(self.xPositions - self.x, self.yPositions - self.y)
-        self.values = self.parentImg[self.yPositions, self.xPositions]
+        self.x_positions = self.positions[1]
+        self.y_positions = self.positions[0]
+        self.r_positions, self.thetaPositions = cartesianToPolar(self.x_positions - self.x, self.y_positions - self.y)
+        self.values = self.parentImg[self.y_positions, self.x_positions]
 

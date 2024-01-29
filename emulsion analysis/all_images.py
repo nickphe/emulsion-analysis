@@ -1,5 +1,5 @@
 import numpy as np
-from analyze3D import analyzeEmulsionImage3D
+from analyze3D import analyze_emulsion_image
 from parse_parent import parse
 import os 
 
@@ -40,8 +40,8 @@ def all_images(parent_folder, abc_guess, epsilon, guess_type):
                 ft_path = f"{parent_folder}/{temp_folder}/ilastik/{img_name}_table.csv"
                 img_path = f"{parent_folder}/{temp_folder}/{img_name}.tif"
 
-                imgFitData = analyzeEmulsionImage3D(img_path, ft_path, img_name, vStep = 0.001, abcGuessLi = abc_guess, minDilRadius = 6, EPSILON = epsilon, guess_type = guess_type)
-                imgFitData.write_csv(log_path, img_name)
+                img_fit_data = analyze_emulsion_image(img_path, ft_path, img_name, v_step = 0.001, abc_guess_list = abc_guess, min_r_dil = 6, EPSILON = epsilon, guess_type = guess_type)
+                img_fit_data.write_csv(log_path, img_name)
             # Error "handling"    - might want to remove this, it might not be a great idea...
             
             except(FileNotFoundError) as fnfe:

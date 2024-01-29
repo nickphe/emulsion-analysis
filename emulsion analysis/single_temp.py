@@ -1,5 +1,5 @@
 import numpy as np
-from analyze3D import analyzeEmulsionImage3D
+from analyze3D import analyze_emulsion_image
 from parse_parent import parse
 import os 
 
@@ -25,5 +25,5 @@ for imgName in curFolder:
     ftPath = f"{parentFolder}/{tempFolder}/ilastik/{imgName}_table.csv"
     imgPath = f"{parentFolder}/{tempFolder}/{imgName}.tif"
 
-    imgFitData = analyzeEmulsionImage3D(imgPath, ftPath, imgName, vStep = 0.001, abcGuessLi = abcGuess, minDilRadius=10)
+    imgFitData = analyze_emulsion_image(imgPath, ftPath, imgName, v_step = 0.001, abc_guess_list = abcGuess, min_r_dil=10)
     imgFitData.write_csv(logPath, imgName)

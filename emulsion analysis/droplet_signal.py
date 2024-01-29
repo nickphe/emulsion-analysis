@@ -22,16 +22,16 @@ def FWHM(max_loc, x, y):
 # object: dropletSignal 
 #   droplet signal converts the intensity data in array form into a "signal" of intensity vs. radii
 #   handles filtering of the data and its derivatives
-class dropletSignal:
-    def __init__(self, rInput, IInput, sg_window, sg_polyorder):
-        self.rIn = rInput
-        self.IIn = IInput
+class DropletSignal:
+    def __init__(self, r_input, I_input, sg_window, sg_polyorder):
+        self.r_input = r_input
+        self.I_input = I_input
         self.sg_window = sg_window
         self.sg_polyorder = sg_polyorder
         
-        newOrder = np.lexsort([self.IIn, self.rIn])
-        self.r = self.rIn[newOrder]
-        self.I = self.IIn[newOrder]
+        new_order = np.lexsort([self.I_input, self.r_input])
+        self.r = self.r_input[new_order]
+        self.I = self.I_input[new_order]
         
         self.filtered_I = SGfilter(self.I, self.sg_window, self.sg_polyorder)
         self.filtered_DI = SGfilter(np.gradient(self.filtered_I), self.sg_window, self.sg_polyorder)
@@ -41,20 +41,20 @@ class dropletSignal:
         self.norm_DI = self.filtered_DI/np.max(np.abs(self.filtered_DI))
         self.norm_D2I = self.filtered_D2I/np.max(np.abs(self.filtered_D2I))
         
-        self.rIndex = int(np.argmax(self.norm_D2I))
-        self.rDen = self.r[self.rIndex]
-        self.D2I_FWHM = FWHM(self.rIndex, self.r, self.norm_D2I)
+        self.r_index = int(np.argmax(self.norm_D2I))
+        self.r_den = self.r[self.r_index]
+        self.D2I_FWHM = FWHM(self.r_index, self.r, self.norm_D2I)
     
     # function: makeFig, makes a figure of the signal data
-    def makeFig(self):
+    def make_fig(self):
         with plt.style.context(["science","nature"]):
             fig, ax = plt.subplots(figsize=(5,5), dpi = 150)
             ax.plot(self.r, self.norm_I, label = "$I$")
             ax.plot(self.r, self.norm_DI, label = "$\\frac{dI}{dr}$")
             ax.plot(self.r, self.norm_D2I, label = "$\\frac{d^2I}{dr^2}$")
-            ax.scatter(self.r[self.rIndex], self.norm_I[self.rIndex], color = "red")
-            ax.scatter(self.r[self.rIndex], self.norm_DI[self.rIndex], color = "red")
-            ax.scatter(self.r[self.rIndex], self.norm_D2I[self.rIndex], color = "red")
+            ax.scatter(self.r[self.r_index], self.norm_I[self.r_index], color = "red")
+            ax.scatter(self.r[self.r_index], self.norm_DI[self.r_index], color = "red")
+            ax.scatter(self.r[self.r_index], self.norm_D2I[self.r_index], color = "red")
             ax.set_xlabel("$r$ px")
             ax.set_ylabel("$I / I_{\\mathrm{|max|}}$ (a.u.)")
             ax.legend()
@@ -62,11 +62,11 @@ class dropletSignal:
     
     # function: saveFig
     # makes a figure at a specified path (make sure to not include ending /) with a specified name
-    def saveFig(self, path, name):
-        fig = self.makeFig()
+    def save_fig(self, path, name):
+        fig = self.make_fig()
         plt.savefig(f'{path}/{name}.png')
         plt.close()
         
     def __str__(self):
-        return f"dense phase radius from signal: {self.rDen}, FWHM of peak: {self.D2I_FWHM} px"
+        return f"dense phase radius from signal: {self.r_den}, FWHM of peak: {self.D2I_FWHM} px"
         

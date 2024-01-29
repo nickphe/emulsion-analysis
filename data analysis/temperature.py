@@ -12,8 +12,8 @@ settings.init()
 from output import create_directory
 from capillary import Capillary
 from scipy.optimize import curve_fit
-from chi_squared import reduced_chi_squared
 from get_cap_number import get_cap_number
+from chi_squared import reduced_chi_squared
 
 from rich.console import Console
 console = Console()

@@ -1,64 +1,58 @@
 import os
+import toml
+
+config = toml.load("/Users/nickphelps/Desktop/emulsion-analysis-main/settings/analysis_config.toml")
+
+def dict_from_lists(keys, values):
+    result_dict = dict.fromkeys(keys)
+    for key, v in zip(result_dict.keys(), values):
+        result_dict[key] = v
+    return result_dict
 
 def init():
 
     global parent_folder
-    parent_folder = "/Users/nanostars/Desktop/2024 01 24 a3_a4 1 to 1/Levers"
+    parent_folder = config['parent_folder']
 
     global output_path
-    output_path = "/Users/nanostars/Desktop/2024 01 24 a3_a4 1 to 1/analysis output"
+    output_path = config['output_path']
     
     global ft_file_pattern
-    ft_file_pattern = "_table"
+    ft_file_pattern = config['ft_file_pattern']
     
     global oi_file_pattern
-    oi_file_pattern = "_Object Identities_{slice_index}"
+    oi_file_pattern = config['oi_file_pattern']
     
     global method_vf
-    method_vf = "mode"
+    method_vf = config['method_vf']
     
     global considered_capillaries
-    considered_capillaries = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    considered_capillaries = config['considered_capillaries']
     
     global conc_dict
-              #cap : #concentration
-    conc_dict = {1 : 102,
-                 2 : 66.0,
-                 3 : 8.3,
-                 4 : 48.4, 
-                 5 : 12.8, 
-                 6 : 73.4, 
-                 7 : 26.9, 
-                 8 : 115.8, 
-                 9 : 56.9}
-                 #10 : 32.0}
+    conc_dict = dict_from_lists(config['capillary_info']['capillary'], config['capillary_info']['concentration'])
     
     global melting_points
-                    #cap  :  #melting point (˚C)
-    melting_points =   {
-                        1 : 37.75,
-                        2 : 37.75,
-                        3 : 36.75,
-                        4 : 38.4, 
-                        5 : 37.35, 
-                        6 : 37.75, 
-                        7 : 37.75, 
-                        8 : 36, 
-                        9 : 37.75}
+    melting_points = dict_from_lists(config['capillary_info']['capillary'], config['capillary_info']['melting_points'])
     
     global mode_bins
-    mode_bins = 100
+    mode_bins = config['mode_bins']
    
     global filter_criteria
-    filter_criteria = {"min vf" : 0,
-                       "max vf": 1,
-                       "max RMSE": 90}
+    filter_criteria = {
+        "min vf" : config['filter_criteria']['min_volume_fraction'],
+        "max vf": config['filter_criteria']['max_volume_fraction'],
+        "max RMSE": config['filter_criteria']['max_RMSE']
+                       }
     
     global plot_settings
     plot_settings = {
-        "pd x label": "$\\alpha_{\\langle 3.5 \\rangle}$",
-        "pd y label": "T ($^\\circ$C)",
-        "lr x label": "$\\alpha_{\\langle 3.5 \\rangle}$",
-        "lr y label": "$\\phi_{\\mathrm{den}}$", 
+        "pd x label": config['figure_captions']['pd_x_label'],
+        "pd y label": config['figure_captions']['pd_y_label'],
+        "lr x label": config['figure_captions']['lr_x_label'],
+        "lr y label": config['figure_captions']['lr_y_label'], 
     }
-    
+
+init()
+
+print(parent_folder)
