@@ -1,5 +1,8 @@
 import os
 import toml
+from rich.console import Console
+console = Console()
+import sys
 
 config = toml.load("/Users/nickphelps/Desktop/emulsion-analysis-main/settings/analysis_config.toml")
 
@@ -24,7 +27,13 @@ def init():
     oi_file_pattern = config['oi_file_pattern']
     
     global method_vf
-    method_vf = config['method_vf']
+    if (config['method_vf'] == 'median'
+        or config['method_vf'] == 'mode'
+        or config['method_vf'] == 'mean'):
+        method_vf = config['method_vf']
+    else:
+        console.print("[bold red]ERROR: [/bold red][cyan](analysis_config.toml)[/cyan] 'method_vf' setting must be one of the following: 'mode', 'median', 'mean'")
+        sys.exit()
     
     global considered_capillaries
     considered_capillaries = config['considered_capillaries']
@@ -44,6 +53,8 @@ def init():
         "max vf": config['filter_criteria']['max_volume_fraction'],
         "max RMSE": config['filter_criteria']['max_RMSE']
                        }
+    
+    
     
     global plot_settings
     plot_settings = {
