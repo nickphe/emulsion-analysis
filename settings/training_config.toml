@@ -1,11 +1,16 @@
 # ilastik training config
 
-project_path = ''
+path_to_ilastik = '/Users/nickphelps/ilastik-1.4.0rc6-OSX.app/Contents/ilastik-release/run_ilastik.sh'
+# path to where ilastik is stored on the computer
+
+parent_folder = '/Users/nickphelps/Desktop/ilastik automation development/test_images'
+# path to parent folder containing all temperature subfolders
+
+ilastik_project = '/Users/nickphelps/Desktop/ilastik automation development/recognize_condensate.ilp'
 # path to .ilp condensate recognition project
 
-export_source = ''
+file_extension = 'tif'
+# file extension of both input and output images
 
-
-# its not about being
-# physically alone its 
-# about lack of companionship
+export_source = 'object identities'
+# export image source option in ilastik

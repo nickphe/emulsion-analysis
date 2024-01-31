@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# cd where ilastik is
+cd "/Users/nickphelps/Desktop/emulsion-analysis-main/run ilastik"
 
-# run ilastik headless mode on .ilp project
+python3 run_ilastik.py
