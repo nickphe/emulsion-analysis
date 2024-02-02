@@ -2,7 +2,7 @@ from all_images import all_images
 import time
 import toml
 
-config = toml.load("/Users/nickphelps/Desktop/emulsion-analysis-main/settings/fitting_config.toml")
+config = toml.load("/Users/nanostars/Desktop/emulsion-analysis-main/settings/fitting_config.toml")
 
 parent_folder = config['parent_folder']
 a = config['a']

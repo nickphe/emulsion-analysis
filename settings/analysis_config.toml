@@ -3,10 +3,10 @@
 # TOML formatting, use literal strings surrounded by single quotes for strings. 
 # TOML is intended to be obvious. Read about it at https://toml.io/en/
 
-parent_folder = '/Users/nickphelps/Desktop/2024 01 24 a3_a4 1 to 1/Levers'
+parent_folder = '/Users/nanostars/Desktop/2024 01 30'
 # Where all temperature data is stored. 
 
-output_path = '/Users/nickphelps/Desktop/2024 01 24 a3_a4 1 to 1/analysis output'
+output_path = '/Users/nanostars/Desktop/2024 01 30 analysis output'
 # Where you would like to output the data.
 # MUST NOT BE THE SAME AS parent_folder.
 

@@ -1,12 +1,12 @@
 # ilastik training config
 
-path_to_ilastik = '/Users/nickphelps/ilastik-1.4.0rc6-OSX.app/Contents/ilastik-release/run_ilastik.sh'
+path_to_ilastik = '/Users/nanostars/ilastik-1.4.0.post1-OSX.app/Contents/ilastik-release/run_ilastik.sh'
 # path to where ilastik is stored on the computer
 
-parent_folder = '/Users/nickphelps/Desktop/ilastik automation development/test_images'
+parent_folder = '/Users/nanostars/Desktop/2024 01 30'
 # path to parent folder containing all temperature subfolders
 
-ilastik_project = '/Users/nickphelps/Desktop/ilastik automation development/recognize_condensate.ilp'
+ilastik_project = '/Users/nanostars/Desktop/recognize_condensate.ilp'
 # path to .ilp condensate recognition project
 
 file_extension = 'tif'

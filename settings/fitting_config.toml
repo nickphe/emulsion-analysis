@@ -1,6 +1,6 @@
 # Droplet fitting / computer vision config 
 
-parent_folder = '/Users/nickphelps/Desktop/2024 01 24 a3_a4 1 to 1/Levers'
+parent_folder = '/Users/nanostars/Desktop/2024 01 30'
 # Where all temperature data is stored. 
 
 a = 500

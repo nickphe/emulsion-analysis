@@ -2,7 +2,7 @@ import subprocess, os, toml
 from parse_parent import parse
 from rich.console import Console
 console = Console()
-config = toml.load("/Users/nickphelps/Desktop/emulsion-analysis-main/settings/training_config.toml")
+config = toml.load("/Users/nanostars/Desktop/emulsion-analysis-main/settings/training_config.toml")
 
 path_to_ilastik = config['path_to_ilastik']
 parent_folder = config['parent_folder']

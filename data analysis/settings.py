@@ -4,7 +4,7 @@ from rich.console import Console
 console = Console()
 import sys
 
-config = toml.load("/Users/nickphelps/Desktop/emulsion-analysis-main/settings/analysis_config.toml")
+config = toml.load("/Users/nanostars/Desktop/emulsion-analysis-main/settings/analysis_config.toml")
 
 def dict_from_lists(keys, values):
     result_dict = dict.fromkeys(keys)
