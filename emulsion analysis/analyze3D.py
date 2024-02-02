@@ -79,62 +79,69 @@ class analyze_emulsion_image:
         self.c_guess = abc_guess_list[2]
         
         self.ft = pd.read_csv(ftPath)
-        self.img = io.imread(imgPath)
         
-        self.x_points = self.ft["Center of the object_0"].to_numpy()
-        self.y_points = self.ft["Center of the object_1"].to_numpy()
+        if self.ft.size > 1: # make sure that ilastik segmented something!
         
-        self.object_area = self.ft["Size in pixels"].to_numpy()
-        
-        # Segment / Guess R_dil
-        print("\t --> Guessing R_dil / Segmenting...")
-        self.circles = inflate.Circles(self.x_points, self.y_points)
-        self.circles.inflate(self.step_size)
-        print("\t --> R_dil guesses and segmentation complete.")
-        
-        fig, ax = plt.subplots(dpi = 200)
-        ax.imshow(self.img)
-        for point in self.circles.point_list:
-            x_arr, y_arr = point.get_circle(360)
-            ax.plot(x_arr, y_arr)
-        plt.savefig(self.output_folder + "_segmentation_plot.png")
-        plt.close()
-        
-        if guess_type == "signal":
-            #self.rDen_guess = self.denseRadii.rDen # guess dense radii based on signal
-            signal_flag = True
-            #print("Guessing off signals!")
-        else:
-            signal_flag = False
-            self.rDen_guess = np.sqrt(self.object_area / np.pi) # guess dense radii based on object area
-        
+            self.img = io.imread(imgPath)
             
-        
-        for k, point in tqdm(enumerate(self.circles.point_list)):
+            self.x_points = self.ft["Center of the object_0"].to_numpy()
+            self.y_points = self.ft["Center of the object_1"].to_numpy()
             
-            if point.radius >= self.min_r_dil:
+            self.object_area = self.ft["Size in pixels"].to_numpy()
+            
+            # Segment / Guess R_dil
+            print("\t --> Guessing R_dil / Segmenting...")
+            self.circles = inflate.Circles(self.x_points, self.y_points)
+            self.circles.inflate(self.step_size)
+            print("\t --> R_dil guesses and segmentation complete.")
+            
+            fig, ax = plt.subplots(dpi = 200)
+            ax.imshow(self.img)
+            for point in self.circles.point_list:
+                x_arr, y_arr = point.get_circle(360)
+                ax.plot(x_arr, y_arr)
+            plt.savefig(self.output_folder + "_segmentation_plot.png")
+            plt.close()
+            
+            if guess_type == "signal":
+                #self.rDen_guess = self.denseRadii.rDen # guess dense radii based on signal
+                signal_flag = True
+                #print("Guessing off signals!")
+            else:
+                signal_flag = False
+                self.rDen_guess = np.sqrt(self.object_area / np.pi) # guess dense radii based on object area
+            
                 
-                try:
-                    drop = segment.droplet_from_img(self.img, point.x,point.y,point.radius)
-                    sg_window = int(point.radius ** 2 * np.pi / 6)
-                    self.dense_radii = droplet_signal.DropletSignal(drop.r_positions, drop.values, sg_window, self.sg_polynomial_order)
-                    extra_data = self.dense_radii.r_den
-                    if signal_flag:
-                        guess_list = [drop.x,drop.y,self.a_guess,self.b_guess,self.c_guess, self.dense_radii.r_den, drop.radius]
-                    else:
-                        guess_list = [drop.x,drop.y,self.a_guess,self.b_guess,self.c_guess, self.rDen_guess[k], drop.radius]
-                    bounds = ([0,0,0,0,0,0,drop.radius - self.EPSILON],[np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,drop.radius + self.EPSILON])
-                    fit_data = fit.dropletFit3D(drop.x_positions, drop.y_positions, drop.values, guess_list, bounds, extra = extra_data)
-                    #print(fitData)
-                    #print(f"{round(k / len(self.circles.pointList), 3) * 100}% complete.")
-                    self.log.append(fit_data.fit_dict)
-                    #self.denseRadii.saveFig(self.signalOutputFolder, str(point)) #save droplet signal figures
-                    plt.close()
+            
+            for k, point in tqdm(enumerate(self.circles.point_list)):
+                
+                if point.radius >= self.min_r_dil:
                     
-                except RuntimeError:
-                    self.log.append(empty_dict)
-                    print("RuntimeError encountered in fitting step!")
-                    continue
+                    try:
+                        drop = segment.droplet_from_img(self.img, point.x,point.y,point.radius)
+                        sg_window = int(point.radius ** 2 * np.pi / 6)
+                        self.dense_radii = droplet_signal.DropletSignal(drop.r_positions, drop.values, sg_window, self.sg_polynomial_order)
+                        extra_data = self.dense_radii.r_den
+                        if signal_flag:
+                            guess_list = [drop.x,drop.y,self.a_guess,self.b_guess,self.c_guess, self.dense_radii.r_den, drop.radius]
+                        else:
+                            guess_list = [drop.x,drop.y,self.a_guess,self.b_guess,self.c_guess, self.rDen_guess[k], drop.radius]
+                        bounds = ([0,0,0,0,0,0,drop.radius - self.EPSILON],[np.inf,np.inf,np.inf,np.inf,np.inf,np.inf,drop.radius + self.EPSILON])
+                        fit_data = fit.dropletFit3D(drop.x_positions, drop.y_positions, drop.values, guess_list, bounds, extra = extra_data)
+                        #print(fitData)
+                        #print(f"{round(k / len(self.circles.pointList), 3) * 100}% complete.")
+                        self.log.append(fit_data.fit_dict)
+                        #self.denseRadii.saveFig(self.signalOutputFolder, str(point)) #save droplet signal figures
+                        plt.close()
+                        
+                    except RuntimeError:
+                        self.log.append(empty_dict)
+                        print("RuntimeError encountered in fitting step!")
+                        continue
+    
+        else:
+            print(f"==> ERROR: SKIPPING {self.img_path}. NO ILASTIK FEATURES IDENTIFIED!")
+    
                 
     def write_csv(self, path, name):
         print("Writing analysis log.")
