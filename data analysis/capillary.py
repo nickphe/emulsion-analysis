@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import settings
 settings.init()
 
-from mode import mode
+from mode import mode, FWHM
 bin_count = settings.mode_bins
 
 from rich.console import Console
@@ -88,6 +88,10 @@ class Capillary:
         self.voronoi_rdil = fd["voronoi rDil"].to_numpy()
         self.signal_rden = fd["signal rDen"].to_numpy()
         
+        NBINS_fwhm = 70
+        vf_count, vf_bins = np.histogram(self.fit_vf, NBINS_fwhm)
+        vf_FWHM = FWHM(np.argmax(vf_count), vf_bins, vf_count)
+        
     # stats from filtered data table
         self.stats = {
             "mean fit vf" : np.mean(self.fit_vf),
@@ -98,7 +102,8 @@ class Capillary:
             "mode fit rden": mode(self.fit_rden, bin_count),
             "mean fit rdil" : np.mean(self.fit_rdil),
             "median fit rdil" : np.median(self.fit_rdil),
-            "mode fit rdil": mode(self.fit_rdil, bin_count)
+            "mode fit rdil": mode(self.fit_rdil, bin_count),
+            "fit vf FWHM": vf_FWHM
         }
         
         columns = list(self.stats.keys())
@@ -125,6 +130,30 @@ class Capillary:
             ax.set_ylabel("Droplets")
             ax.set_xlim([0,1])
             plt.savefig(f"{self.folder_path}/vf_histogram.png")
+            plt.close()
+        
+            fig, ax = plt.subplots(dpi = 500)
+            count, bins = np.histogram(rd_vf, floor(len(rd_vf)/2))
+            ax.stairs(count, bins, fill = False)
+            ax.vlines(self.stats["mode fit vf"], 0, 20, label = "Mode", color = "firebrick", linestyle = "-")
+            ax.vlines(self.stats["mean fit vf"], 0, 20,label = "Mean", color = "darkslategray", linestyle = "--")
+            ax.vlines(self.stats["median fit vf"], 0, 20,  label = "Median", color = "navy", linestyle = "-.")
+            ax.legend()
+            ax.set_xlabel("$\\phi$")
+            ax.set_ylabel("Droplets")
+            plt.savefig(f"{self.folder_path}/raw_data_vf_histogram.png")
+            plt.close()
+            
+            fig, ax = plt.subplots(dpi = 500)
+            count, bins = np.histogram(fd_vf, floor(len(rd_vf)/2))
+            ax.stairs(count, bins, fill = False)
+            ax.vlines(self.stats["mode fit vf"], 0, 20, label = "Mode", color = "firebrick", linestyle = "-")
+            ax.vlines(self.stats["mean fit vf"], 0, 20,label = "Mean", color = "darkslategray", linestyle = "--")
+            ax.vlines(self.stats["median fit vf"], 0, 20,  label = "Median", color = "navy", linestyle = "-.")
+            ax.legend()
+            ax.set_xlabel("$\\phi$")
+            ax.set_ylabel("Droplets")
+            plt.savefig(f"{self.folder_path}/filtered_data_vf_histogram.png")
             plt.close()
         
         

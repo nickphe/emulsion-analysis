@@ -9,3 +9,17 @@ def mode(arr, bin_count: int):
     b = bins[tallest_bin_index + 1]
     m = (a + b) / 2.0
     return m
+
+def FWHM(max_loc, x, y):
+    amax = y[max_loc]
+    stop = amax * 0.5
+    indR = max_loc
+    while indR < len(y) and y[indR] > stop:
+        indR += 1
+    indL = max_loc
+    while indL >= 0 and y[indL] > stop:
+        indL += -1
+    indR = min(indR, len(x) - 1)
+    indL = max(indL, 0)
+    fw = x[indR] - x[indL]
+    return fw

@@ -1,6 +1,6 @@
 # Droplet fitting / computer vision config 
 
-parent_folder = '/Users/nanostars/Desktop/2024 01 30'
+parent_folder = '/Users/nanostars/Desktop/phase-diagrams/2024 01 24 a3_a4 1 to 1/Levers'
 # Where all temperature data is stored. 
 
 a = 500

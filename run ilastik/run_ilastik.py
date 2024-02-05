@@ -2,6 +2,8 @@ import subprocess, os, toml
 from parse_parent import parse
 from rich.console import Console
 console = Console()
+
+# Pull settings from config file
 config = toml.load("/Users/nanostars/Desktop/emulsion-analysis-main/settings/training_config.toml")
 
 path_to_ilastik = config['path_to_ilastik']
@@ -10,6 +12,7 @@ ilastik_project = config['ilastik_project']
 file_extension = config['file_extension']
 export_source = config['export_source']
 
+# Parse parent folder to retriever temperature folders and the capillaries within them 
 parsed_path = parse(parent_folder)
 folders = list(parsed_path[0].keys())
 

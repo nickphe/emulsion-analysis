@@ -3,10 +3,10 @@
 # TOML formatting, use literal strings surrounded by single quotes for strings. 
 # TOML is intended to be obvious. Read about it at https://toml.io/en/
 
-parent_folder = '/Users/nanostars/Desktop/2024 01 30'
+parent_folder = '/Users/nanostars/Desktop/phase-diagrams/2024 01 24 a3_a4 1 to 1/Levers'
 # Where all temperature data is stored. 
 
-output_path = '/Users/nanostars/Desktop/2024 01 30 analysis output'
+output_path = '/Users/nanostars/Desktop/phase-diagrams/2024 01 24 a3_a4 1 to 1/analysis output 2024 02 05'
 # Where you would like to output the data.
 # MUST NOT BE THE SAME AS parent_folder.
 
@@ -36,8 +36,8 @@ considered_capillaries = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 [capillary_info]
 capillary =     [    1,     2,     3,    4,     5,     6,     7,     8,    9]
-concentration = [102.0,  66.0,   8.3, 48.4,  12.8,  73.4,  26.9, 115.8, 56.9]
-melting_points = [37.75, 37.75, 36.75, 38.4, 37.35, 37.75, 37.75,  36.0, 37.5]
+concentration = [102.0, 66.0, 8.3, 48.4, 12.8, 73.4, 26.9, 115.8, 56.9]
+melting_points = [37.75, 37.75, 36.75, 38.4, 37.4, 37.75, 37.75, 35.75, 37.75]
 # Table containing capillaries corresponding with their concentrations and melting points. 
 # Make sure that every value conatined in a single array is of the same type, i.e
 #    an array of floats [1.43, 2.0, 1.99, 5.82]
@@ -50,9 +50,9 @@ max_RMSE = 90
 # Table containing filter criteria.
 
 [figure_captions]
-pd_x_label = '$\alpha_{\langle 3.5 \rangle}$'
+pd_x_label = '$\alpha_{3}, \alpha_{4}$ (1:1) ($\mu$M)'
 pd_y_label = 'T ($^\circ$C)'
-lr_x_label = '$\alpha_{\langle 3.5 \rangle}$'
+lr_x_label = '$\alpha_{3}, \alpha_{4}$ (1:1) ($\mu$M)'
 lr_y_label = '$\phi_{\mathrm{den}}$'
 # Table containing figure captions. 
 # the "pd" prefix corresponds to "phase diagram"
