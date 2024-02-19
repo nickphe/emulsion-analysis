@@ -14,7 +14,7 @@ from capillary import Capillary
 from scipy.optimize import curve_fit
 from get_cap_number import get_cap_number
 from chi_squared import reduced_chi_squared
-from mode import FWHM
+from mode import FWHM_uncertainty
 from rich.console import Console
 from linear_odr import linear_odr, lin_model_odr
 console = Console()
@@ -76,22 +76,28 @@ class Temperature:
             conc_ref = pd.DataFrame({"Capillary #": num_list, "Concentration (uM)": conc_list})
             conc_ref.to_csv(f"{self.folder_path}/capillary-concentration_reference.csv")
             
-            
+            # #force a 0,0 point in concentration / vf
+            # conc_list.append(0.5)
+            # conc_u_list.append(0.5)
+            # vf_list.append(0)
+            # vf_u_list.append(0.005)
             
         # fit line                 function,      x,        y
             # popt, pcov = curve_fit(lin_model, conc_list, vf_list, 
             #                        sigma = vf_u_list, absolute_sigma = True) # weights fits based on uncertainty
             popt, pcov, psd = linear_odr(conc_list, vf_list, conc_u_list, vf_u_list, 0, 0) # use orthogonal distance regression to fit line
-            print(popt, pcov, psd)
+            #print(popt, pcov, psd)
             m = popt[0]
+            #b = -1.0 * popt[1] ** 2 #because of current b^2 to ensure negative intercept
             b = popt[1]
             sigma_m = psd[0]
             sigma_b = psd[1]
+            #sigma_b = np.sqrt((-2 * b * psd[1] ) ** 2) #because of current b^2 to ensure negative intercept
             ns_den = (1-b)/m
             ns_dil = (-b)/m
             ns_den_uncertainty = np.sqrt( np.square(sigma_b/m) + (np.square(1-b)*np.square(sigma_m)) / (m ** 4) )
             ns_dil_uncertainty = np.sqrt( np.square(sigma_b/m) + (np.square(b) * np.square(sigma_m)) / (m ** 4) )
-            print(ns_den_uncertainty, ns_dil_uncertainty)
+            #print(ns_den_uncertainty, ns_dil_uncertainty)
             self.ns_den = ns_den
             self.ns_dil = ns_dil
             self.ns_den_uncertainty = ns_den_uncertainty

@@ -6,7 +6,9 @@ import pandas as pd
 import settings
 settings.init()
 
-def save_phase_diagram(list_of_temperatures, melting_points, conc_list):
+def save_phase_diagram(list_of_temperatures, melting_points, mp_uncertainties, conc_list, conc_uncertainties):
+    
+    conc_uncertainties = np.array(conc_uncertainties)
     
     f = open(f"{settings.output_path}/phase_diagram_info.txt", "w")
     
@@ -39,7 +41,7 @@ def save_phase_diagram(list_of_temperatures, melting_points, conc_list):
         fig, ax = plt.subplots(dpi = 1000)
         ax.errorbar(ns_den_list, temp_list, yerr = np.ones(len(ns_den_list))*0.5, xerr = ns_den_uncertainty_list, linestyle = "", marker = "o", capsize = 3)
         ax.errorbar(ns_dil_list, temp_list, yerr = np.ones(len(ns_den_list))*0.5, xerr = ns_dil_uncertainty_list, linestyle = "", marker = "o", capsize = 3)
-        ax.plot(conc_list, melting_points, linestyle = "", marker = "o")
+        ax.errorbar(conc_list, melting_points, xerr = conc_uncertainties, yerr = mp_uncertainties, linestyle = "", marker = "o", capsize = 3)
         ax.set_xlabel(settings.plot_settings["pd x label"])
         ax.set_ylabel(settings.plot_settings["pd y label"])
         plt.savefig(f"{settings.output_path}/phase_diagram.png")

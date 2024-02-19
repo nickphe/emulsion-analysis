@@ -34,6 +34,9 @@ temp_value_list = [extract_numeric_part(temp) for temp in temp_name_list]
 temp_obj_list = []
 
 create_directory(output_path)
+
+#create_directory(output_path) make to output config
+
 console.print(f"[bold white]Parsing[/bold white] {parent_folder}")
 with console.status("[bold green]Analyzing data...") as status:
     for i, name in enumerate(temp_name_list):
@@ -47,6 +50,8 @@ with console.status("[bold green]Analyzing data...") as status:
 
 
 with console.status("[bold green]Generating phase diagram...") as status:      
-    save_phase_diagram(temp_obj_list, settings.melting_points.values(), settings.conc_dict.values())
+    conc_list = list(settings.conc_dict.values())
+    conc_uncertainties = list(settings.conc_u_dict.values())
+    save_phase_diagram(temp_obj_list, settings.melting_points.values(), settings.mp_u, conc_list, conc_uncertainties)
 
 console.print("[bold green]Analysis complete.")

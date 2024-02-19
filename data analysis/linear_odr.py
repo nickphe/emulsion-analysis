@@ -1,8 +1,12 @@
 from scipy.odr import Model, Data, ODR
 import numpy as np
 
+
+
 def lin_model_odr(params, x):
+    #b = params[1] ** 2 restrict b negative
     return params[0] * x + params[1]
+
 
 def linear_odr(x, y, x_u, y_u, m_inguess, b_inguess):
 

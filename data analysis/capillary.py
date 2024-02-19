@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import settings
 settings.init()
 
-from mode import mode, FWHM
+from mode import mode, FWHM_uncertainty
 bin_count = settings.mode_bins
 
 from rich.console import Console
@@ -30,6 +30,7 @@ class Capillary:
         self.temp_value = extract_numeric_part(temperature_name)
         self.cap_number = get_cap_number(capillary_name)
         self.concentration = settings.conc_dict[self.cap_number]
+        self.concentration_uncertainties = settings.conc_u_dict[self.cap_number]
         #console.log(f"{self.name}", self.cap_number, self.concentration, sep = "\t")
         
     # initiate directory that will hold this capillaries data
@@ -90,7 +91,7 @@ class Capillary:
         
         NBINS_fwhm = 70
         vf_count, vf_bins = np.histogram(self.fit_vf, NBINS_fwhm)
-        vf_FWHM = FWHM(np.argmax(vf_count), vf_bins, vf_count)
+        vf_FWHM = FWHM_uncertainty(np.argmax(vf_count), vf_bins, vf_count)
         
     # stats from filtered data table
         self.stats = {
@@ -133,7 +134,7 @@ class Capillary:
             plt.close()
         
             fig, ax = plt.subplots(dpi = 500)
-            count, bins = np.histogram(rd_vf, floor(len(rd_vf)/2))
+            count, bins = np.histogram(rd_vf, (floor(len(rd_vf)/2) + 1))
             ax.stairs(count, bins, fill = False)
             ax.vlines(self.stats["mode fit vf"], 0, 20, label = "Mode", color = "firebrick", linestyle = "-")
             ax.vlines(self.stats["mean fit vf"], 0, 20,label = "Mean", color = "darkslategray", linestyle = "--")
@@ -145,7 +146,7 @@ class Capillary:
             plt.close()
             
             fig, ax = plt.subplots(dpi = 500)
-            count, bins = np.histogram(fd_vf, floor(len(rd_vf)/2))
+            count, bins = np.histogram(fd_vf, (floor(len(rd_vf)/2)+1))
             ax.stairs(count, bins, fill = False)
             ax.vlines(self.stats["mode fit vf"], 0, 20, label = "Mode", color = "firebrick", linestyle = "-")
             ax.vlines(self.stats["mean fit vf"], 0, 20,label = "Mean", color = "darkslategray", linestyle = "--")

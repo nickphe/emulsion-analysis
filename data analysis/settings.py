@@ -41,6 +41,12 @@ def init():
     global conc_dict
     conc_dict = dict_from_lists(config['capillary_info']['capillary'], config['capillary_info']['concentration'])
     
+    global conc_u_dict
+    conc_u_dict = dict_from_lists(config['capillary_info']['capillary'], config['capillary_info']['concentration_uncertainty'])
+    
+    global mp_u
+    mp_u = config['capillary_info']['mp_uncerainties']
+    
     global melting_points
     melting_points = dict_from_lists(config['capillary_info']['capillary'], config['capillary_info']['melting_points'])
     
