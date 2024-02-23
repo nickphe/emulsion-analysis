@@ -30,7 +30,7 @@ class Capillary:
         self.temp_value = extract_numeric_part(temperature_name)
         self.cap_number = get_cap_number(capillary_name)
         self.concentration = settings.conc_dict[self.cap_number]
-        self.concentration_uncertainties = settings.conc_u_dict[self.cap_number]
+        self.concentration_uncertainty = settings.conc_u_dict[self.cap_number]
         #console.log(f"{self.name}", self.cap_number, self.concentration, sep = "\t")
         
     # initiate directory that will hold this capillaries data
@@ -106,6 +106,7 @@ class Capillary:
             "mode fit rdil": mode(self.fit_rdil, bin_count),
             "fit vf FWHM": vf_FWHM
         }
+        print(f"mode vf: {mode(self.fit_vf, bin_count)}")
         
         columns = list(self.stats.keys())
         values = [list(self.stats.values())]

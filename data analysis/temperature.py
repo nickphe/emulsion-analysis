@@ -54,6 +54,8 @@ class Temperature:
             
             f = open(f"{self.folder_path}/lever_rule_data.txt", "w")
             f.write(f"T = {self.value}˚C lever-rule data \n")
+            
+            
         # create lever rule dataset 
         
             method_vf = settings.method_vf
@@ -67,7 +69,7 @@ class Temperature:
                 vf_u_list.append(vf_u)
                 conc = capillary.concentration
                 conc_list.append(conc)
-                conc_u = capillary.concentration * 0.10  # temporary 3% pipetting uncertainty
+                conc_u = capillary.concentration_uncertainty 
                 conc_u_list.append(conc_u)
                 num = capillary.cap_number
                 num_list.append(num)
@@ -76,6 +78,8 @@ class Temperature:
             conc_ref = pd.DataFrame({"Capillary #": num_list, "Concentration (uM)": conc_list})
             conc_ref.to_csv(f"{self.folder_path}/capillary-concentration_reference.csv")
             
+            lever_rule_data = pd.DataFrame({"conc": conc_list, "conc uncertainty": conc_u_list, "vf": vf_list, "vf uncertainty": vf_u_list})
+            lever_rule_data.to_csv(f"{self.folder_path}/lever_rule.csv")
             # #force a 0,0 point in concentration / vf
             # conc_list.append(0.5)
             # conc_u_list.append(0.5)
@@ -104,7 +108,8 @@ class Temperature:
             self.ns_dil_uncertainty = ns_dil_uncertainty
             rchi_2 = reduced_chi_squared(observed = np.array(vf_list), 
                                          expected = lin_model(np.array(conc_list),m,b), 
-                                         sigma = np.array(vf_u_list), 
+                                         sigma = np.array(vf_u_list),
+                                         #sigma = np.sqrt(np.square(np.array(vf_u_list)) + np.square(conc_u_list)), # add x and y errors in quadrature to get residual in diagonal direction
                                          dof = (len(vf_list) - 3))
             self.lr_rchi_2 = rchi_2
        

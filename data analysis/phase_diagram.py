@@ -33,7 +33,12 @@ def save_phase_diagram(list_of_temperatures, melting_points, mp_uncertainties, c
         "ns_dil" : ns_dil_list})
     dt.to_csv(f"{settings.output_path}/phase_diagram_dendil_data.csv")
     
-    mp = pd.DataFrame({"conc": conc_list, "melting point": melting_points})
+    mp = pd.DataFrame({
+        "conc": conc_list, 
+        "conc_uncertainty": conc_uncertainties,
+        "melting point": melting_points,
+        "melt_uncertainty": mp_uncertainties
+        })
     mp.to_csv(f"{settings.output_path}/phase_diagram_melting_data.csv")
     
     with plt.style.context(["science","nature"]):
